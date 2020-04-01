@@ -31,11 +31,25 @@ const App = () => {
       name: newName,
       number: newNumber
     };
-    if (persons.map(person => person.name).includes(newName)) {
-      alert(`${newName} is already added to phonebook`);
+    const person = persons.find(person => person.name === newName);
+
+    if (person) {
+      if (
+        window.confirm(
+          `${person.name} is already added to the phonebook, do you wish to replace the old number with a new one?`
+        )
+      ) {
+        personService.updatePerson(person.id, newPerson).then(updatedPerson => {
+          setPersons(
+            persons.map(person =>
+              person.id === updatedPerson.id ? updatedPerson : person
+            )
+          );
+          setNewName("");
+        });
+      }
       return;
     }
-
     personService.create(newPerson).then(returnedPerson => {
       setPersons(persons.concat(returnedPerson));
       setNewName("");
