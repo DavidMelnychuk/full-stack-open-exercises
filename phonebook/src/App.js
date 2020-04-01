@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Person from "./components/Person";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import axios from "axios";
+import personService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,12 +10,11 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
 
   const hook = () => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
-      setPersons(response.data);
+    personService.getAll().then(initialPersons => {
+      setPersons(initialPersons);
     });
   };
+
   useEffect(hook, []);
 
   const handleNameChange = event => {
@@ -36,13 +35,34 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
       return;
     }
-    setPersons(persons.concat(newPerson));
-    setNewName("");
+
+    personService.create(newPerson).then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson));
+      setNewName("");
+    });
+  };
+
+  const deletePerson = person => {
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .deletePerson(person.id)
+        .then(() => {
+          personService.getAll().then(returnedPersons => {
+            setPersons(returnedPersons);
+          });
+        })
+        .catch(error => console.log(error));
+    }
   };
 
   const displayNumbers = () =>
     persons.map(person => (
-      <Person key={person.name} name={person.name} number={person.number} />
+      <Person
+        key={person.name}
+        name={person.name}
+        number={person.number}
+        deletePerson={() => deletePerson(person)}
+      />
     ));
 
   return (
