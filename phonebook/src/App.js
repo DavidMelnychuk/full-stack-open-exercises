@@ -3,11 +3,13 @@ import Person from "./components/Person";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [notificationMEssage, setNotificationMEssage] = useState(null);
 
   const hook = () => {
     personService.getAll().then(initialPersons => {
@@ -46,6 +48,13 @@ const App = () => {
             )
           );
           setNewName("");
+
+          setNotificationMEssage(
+            `The phone number for ${updatedPerson.name} has been successfully updated.`
+          );
+          setTimeout(() => {
+            setNotificationMEssage(null);
+          }, 5000);
         });
       }
       return;
@@ -53,6 +62,11 @@ const App = () => {
     personService.create(newPerson).then(returnedPerson => {
       setPersons(persons.concat(returnedPerson));
       setNewName("");
+
+      setNotificationMEssage(`Added ${returnedPerson.name}`);
+      setTimeout(() => {
+        setNotificationMEssage(null);
+      }, 5000);
     });
   };
 
@@ -82,6 +96,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={notificationMEssage} />
       <h2>Add a New Person</h2>
       <PersonForm
         addPerson={addPerson}
