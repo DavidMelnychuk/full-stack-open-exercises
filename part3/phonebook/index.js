@@ -7,17 +7,17 @@ let persons = [
     {
       id: 1,
       Name: "Arto Hellas",
-      date: "2019-05-30T17:30:31.098Z",
+      number: "1234612"
     },
     {
       id: 2,
       Name: "Dave Lave",
-      date: "2019-05-30T18:39:34.091Z",
+      number: "23411234125"
     },
     {
       id: 3,
       Name: "Linh Linh",
-      date: "2019-05-30T19:20:14.298Z",
+      number: "123412351235"
     }
   ]   
 
@@ -52,16 +52,22 @@ app.delete('/api/persons/:id', (req, res ) => {
 app.post('/api/persons', (req, res) => {
     const body = req.body
     
-    if(!body.name){
+    if(!body.name || !body.number){
         return res.status(400).json({
-            error: 'name missing'
+            error: 'name or number is missing'
         })
     }
-    
+
+    if(persons.map(person => person.name).includes(body.name)){
+        return res.status(400).json({
+            error: 'name already exists'
+        })
+    }
+
     const person = {
         id: generateId(),
         name: body.name,
-        date: new Date()
+        number: body.number
     }
     persons = persons.concat(person)
 
