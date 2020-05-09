@@ -9,31 +9,31 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  const [notificationMEssage, setNotificationMEssage] = useState(null);
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   const hook = () => {
-    personService.getAll().then(initialPersons => {
+    personService.getAll().then((initialPersons) => {
       setPersons(initialPersons);
     });
   };
 
   useEffect(hook, []);
 
-  const handleNameChange = event => {
+  const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
 
-  const handleNumberChange = event => {
+  const handleNumberChange = (event) => {
     setNewNumber(event.target.value);
   };
 
-  const addPerson = event => {
+  const addPerson = (event) => {
     event.preventDefault();
     const newPerson = {
       name: newName,
-      number: newNumber
+      number: newNumber,
     };
-    const person = persons.find(person => person.name === newName);
+    const person = persons.find((person) => person.name === newName);
 
     if (person) {
       if (
@@ -41,50 +41,59 @@ const App = () => {
           `${person.name} is already added to the phonebook, do you wish to replace the old number with a new one?`
         )
       ) {
-        personService.updatePerson(person.id, newPerson).then(updatedPerson => {
-          setPersons(
-            persons.map(person =>
-              person.id === updatedPerson.id ? updatedPerson : person
-            )
-          );
-          setNewName("");
+        personService
+          .updatePerson(person.id, newPerson)
+          .then((updatedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id === updatedPerson.id ? updatedPerson : person
+              )
+            );
+            setNewName("");
 
-          setNotificationMEssage(
-            `The phone number for ${updatedPerson.name} has been successfully updated.`
-          );
-          setTimeout(() => {
-            setNotificationMEssage(null);
-          }, 5000);
-        });
+            setNotificationMessage(
+              `The phone number for ${updatedPerson.name} has been successfully updated.`
+            );
+            setTimeout(() => {
+              setNotificationMessage(null);
+            }, 5000);
+          });
       }
       return;
     }
-    personService.create(newPerson).then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName("");
+    personService
+      .create(newPerson)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
 
-      setNotificationMEssage(`Added ${returnedPerson.name}`);
-      setTimeout(() => {
-        setNotificationMEssage(null);
-      }, 5000);
-    });
+        setNotificationMessage(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setNotificationMessage(null);
+        }, 5000);
+      })
+      .catch(error => {
+        console.log(error)
+        console.log(error.response.data);
+        setNotificationMessage(`${error.response.data.error}`);
+      });
   };
 
-  const deletePerson = person => {
+  const deletePerson = (person) => {
     if (window.confirm(`Delete ${person.name}?`)) {
       personService
         .deletePerson(person.id)
         .then(() => {
-          personService.getAll().then(returnedPersons => {
+          personService.getAll().then((returnedPersons) => {
             setPersons(returnedPersons);
           });
         })
-        .catch(error => console.log(error));
+        .catch((error) => console.log(error));
     }
   };
 
   const displayNumbers = () =>
-    persons.map(person => (
+    persons.map((person) => (
       <Person
         key={person.name}
         name={person.name}
@@ -96,7 +105,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={notificationMEssage} />
+      <Notification message={notificationMessage} />
       <h2>Add a New Person</h2>
       <PersonForm
         addPerson={addPerson}
