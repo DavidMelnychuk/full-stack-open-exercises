@@ -1,7 +1,5 @@
 import React from "react";
 
-const Persons = ({displayNumbers}) => (
-    <div>{displayNumbers()}</div>
-)
+const Persons = ({ displayNumbers }) => <div>{displayNumbers()}</div>;
 
-export default Persons
+export default Persons;
