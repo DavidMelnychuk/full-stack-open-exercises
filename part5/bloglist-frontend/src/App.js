@@ -6,6 +6,9 @@ import loginService from "./services/login";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
+  const [newTitle, setNewTitle] = useState("");
+  const [newAuthor, setNewAuthor] = useState("");
+  const [newUrl, setNewUrl] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
@@ -22,7 +25,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
     }
-  });
+  }, []);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -32,6 +35,7 @@ const App = () => {
         password,
       });
 
+      blogService.setToken(user.token);
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
       setUser(user);
       setUsername("");
@@ -74,6 +78,59 @@ const App = () => {
     </form>
   );
 
+  const handleTitleChange = (event) => {
+    setNewTitle(event.target.value);
+  };
+
+  const handleAuthorChange = (event) => {
+    setNewAuthor(event.target.value);
+  };
+
+  const handleUrlChange = (event) => {
+    setNewUrl(event.target.value);
+  };
+
+  const addBlog = (event) => {
+    event.preventDefault();
+
+    const blogObject = {
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl,
+    };
+
+    blogService.create(blogObject).then((returnedBlog) => {
+      console.log(returnedBlog);
+      blogService.getAll().then((blogs) => {
+        console.log(blogs);
+        setBlogs(blogs);
+        setNewTitle("");
+        setNewAuthor("");
+        setNewUrl("");
+      });
+    });
+  };
+
+  const blogForm = () => (
+    <div>
+      <h2> create new blog post</h2>
+      <form onSubmit={addBlog}>
+        <input
+          value={newTitle}
+          onChange={handleTitleChange}
+          placeholder="title"
+        />
+        <input
+          value={newAuthor}
+          onChange={handleAuthorChange}
+          placeholder="author"
+        />
+        <input value={newUrl} onChange={handleUrlChange} placeholder="URL" />
+        <button type="submit">create</button>
+      </form>
+    </div>
+  );
+
   if (user === null) {
     return (
       <div>
@@ -92,6 +149,7 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
       </div>
+      {blogForm()}
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
