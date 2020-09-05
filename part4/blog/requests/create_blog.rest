@@ -1,5 +1,6 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGVubG92ZXNkYXZpZCIsImlkIjoiNWY1MmQwODBhZjJkY2Y0N2I5MWI3MGY4IiwiaWF0IjoxNTk5MjY0NzQ2fQ.tt-jnw4ySYxEhyk3lyyynbePSrnpZuHzFBPy9SNVubw
 
 {
     "title": "Testing World .CO",
