@@ -1,9 +1,9 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGVubG92ZXNkYXZpZCIsImlkIjoiNWY1MmQwODBhZjJkY2Y0N2I5MWI3MGY4IiwiaWF0IjoxNTk5MjY0NzQ2fQ.tt-jnw4ySYxEhyk3lyyynbePSrnpZuHzFBPy9SNVubw
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjEyMyIsImlkIjoiNWY1MmY4MjM2N2U1OTM2MGUxYjE2MThmIiwiaWF0IjoxNTk5MjczMDkzfQ.LfWHj_YpT3HEdftpwaftXtJQf3n6AGM6lKnG-VhQ_qI
 
 {
-    "title": "Testing World .CO",
+    "title": "Test User's Blog",
     "author": "Robert C. Martin",
     "url": "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
     "likes": 70,
