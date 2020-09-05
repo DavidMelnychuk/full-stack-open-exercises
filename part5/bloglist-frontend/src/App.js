@@ -4,15 +4,13 @@ import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import BlogForm from "./components/BlogForm";
-// import LoginForm from "./components/LoginForm";
+import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
   const [user, setUser] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -27,8 +25,7 @@ const App = () => {
     }
   }, []);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = async (username, password) => {
     try {
       const user = await loginService.login({
         username,
@@ -38,8 +35,6 @@ const App = () => {
       blogService.setToken(user.token);
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
       setUser(user);
-      setUsername("");
-      setPassword("");
     } catch (exception) {
       console.log(exception);
       setErrorMessage("Wrong username or password");
@@ -64,41 +59,12 @@ const App = () => {
     });
   };
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  );
-
   if (user === null) {
     return (
       <div>
         <Notification message={errorMessage} />
         <h2>Log in to application</h2>
-        {loginForm()}
-        {/* <LoginForm
-          // handleLogin={handleLogin}
-          setUser={setUser}
-          setErrorMessage={setErrorMessage}
-        ></LoginForm> */}
+        <LoginForm handleLogin={handleLogin}></LoginForm>
       </div>
     );
   }
@@ -111,9 +77,11 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
       </div>
+
       <Togglable buttonLabel="new blog">
         <BlogForm addBlog={addBlog}></BlogForm>
       </Togglable>
+
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
