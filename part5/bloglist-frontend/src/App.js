@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Blog from "./components/Blog";
+import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -37,10 +38,10 @@ const App = () => {
       setPassword("");
     } catch (exception) {
       console.log(exception);
-      // setErrorMessage('Wrong Credentials')
-      // setTimeout(() => {
-      //   setErrorMessage(null)
-      // }, 5000)
+      setErrorMessage("Wrong username or password");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
     }
   };
 
@@ -76,6 +77,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
+        <Notification message={errorMessage} />
         <h2>Log in to application</h2>
         {loginForm()}
       </div>
@@ -86,11 +88,10 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <div>
+        <Notification message={errorMessage} />
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
       </div>
-      {/* <Notification message={errorMessage} /> */}
-
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
