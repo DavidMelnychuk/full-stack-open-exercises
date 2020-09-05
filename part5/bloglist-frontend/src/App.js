@@ -3,16 +3,16 @@ import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import BlogForm from "./components/BlogForm";
+// import LoginForm from "./components/LoginForm";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [newTitle, setNewTitle] = useState("");
-  const [newAuthor, setNewAuthor] = useState("");
-  const [newUrl, setNewUrl] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [user, setUser] = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -54,6 +54,16 @@ const App = () => {
     setUser(null);
   };
 
+  const addBlog = (blogObject) => {
+    blogService.create(blogObject).then((returnedBlog) => {
+      console.log(returnedBlog);
+      blogService.getAll().then((blogs) => {
+        console.log(blogs);
+        setBlogs(blogs);
+      });
+    });
+  };
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
@@ -78,65 +88,17 @@ const App = () => {
     </form>
   );
 
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value);
-  };
-
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value);
-  };
-
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value);
-  };
-
-  const addBlog = (event) => {
-    event.preventDefault();
-
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-    };
-
-    blogService.create(blogObject).then((returnedBlog) => {
-      console.log(returnedBlog);
-      blogService.getAll().then((blogs) => {
-        console.log(blogs);
-        setBlogs(blogs);
-        setNewTitle("");
-        setNewAuthor("");
-        setNewUrl("");
-      });
-    });
-  };
-
-  const blogForm = () => (
-    <div>
-      <h2> create new blog post</h2>
-      <form onSubmit={addBlog}>
-        <input
-          value={newTitle}
-          onChange={handleTitleChange}
-          placeholder="title"
-        />
-        <input
-          value={newAuthor}
-          onChange={handleAuthorChange}
-          placeholder="author"
-        />
-        <input value={newUrl} onChange={handleUrlChange} placeholder="URL" />
-        <button type="submit">create</button>
-      </form>
-    </div>
-  );
-
   if (user === null) {
     return (
       <div>
         <Notification message={errorMessage} />
         <h2>Log in to application</h2>
         {loginForm()}
+        {/* <LoginForm
+          // handleLogin={handleLogin}
+          setUser={setUser}
+          setErrorMessage={setErrorMessage}
+        ></LoginForm> */}
       </div>
     );
   }
@@ -149,7 +111,9 @@ const App = () => {
         <p>{user.name} logged in</p>
         <button onClick={handleLogout}>logout</button>
       </div>
-      {blogForm()}
+      <Togglable buttonLabel="new blog">
+        <BlogForm addBlog={addBlog}></BlogForm>
+      </Togglable>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
