@@ -41,14 +41,23 @@ const BlogForm = ({ addBlog }) => {
           value={newTitle}
           onChange={handleTitleChange}
           placeholder="title"
+          id="title-input"
         />
         <input
           value={newAuthor}
           onChange={handleAuthorChange}
           placeholder="author"
+          id="author-input"
         />
-        <input value={newUrl} onChange={handleUrlChange} placeholder="URL" />
-        <button type="submit">create</button>
+        <input
+          value={newUrl}
+          onChange={handleUrlChange}
+          placeholder="URL"
+          id="url-input"
+        />
+        <button type="submit" id="create-button">
+          create
+        </button>
       </form>
     </div>
   );
